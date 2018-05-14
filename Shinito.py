@@ -7,17 +7,18 @@
 try:
     import os
     import re
+    import sys
     import time
     import datetime
     from os.path import isfile, join
     from imdbpie import Imdb
 
 except Exception as ex:
-    print('Error! while loading the dependencies. Please make sure you have following dependencies\n')
-    print('"imdbpie" : Please install this by using \'pip install imdbpie\' or refer to'
+    print('\n"imdbpie" : Please install this by using \'pip install imdbpie\' or refer to'
           ' \'https://pypi.org/project/imdbpie/\'\n')
     print('If you face any other problem please refer to \'https://github.com/NotCherub/Shinito\'')
-
+    sys.exit('\nError finding a dependency, Please install and then re-run program\n')
+    
 __author__ = "Cherub"
 __version__ = "1.8.alpha"       # Added Rename support and changes in Warning Message
 __email__ = "mldata.apoorv@gmail.com"
