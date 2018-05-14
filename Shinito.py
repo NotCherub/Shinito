@@ -19,10 +19,10 @@ except Exception as ex:
     print('If you face any other problem please refer to \'https://github.com/NotCherub/Shinito\'')
 
 __author__ = "Cherub"
-__version__ = "1.7.beta"
+__version__ = "1.8.alpha"       # Added Rename support and changes in Warning Message
 __email__ = "mldata.apoorv@gmail.com"
 __status__ = "Prototype"
-__credit__ = "Dipansh, TAZZ(Subodh) "
+__credit__ = "Dipansh, TAZZ(Subodh)"
 
 allVideos = []
 
@@ -35,7 +35,7 @@ class Video:
     def __init__(self, name, path, folder):
         """
         :param name: The name of the video file passed as str object.
-        :param path: The complete path of the video starting at the program's directory.
+        :param path: The complete path of the folder containing video starting at the program's directory.
         :param folder: The name of the folder that contains the given video file.
         """
         self.init_name = name
@@ -105,11 +105,21 @@ class Video:
             Sets the self.title variable to movie name + year
         :return:
         """
+        if self.title is None:
+            print('Unable to get a valid name, Please enter manually')
+            self.title = input()
+
         movie_name = self.title + ' (' +str(self.year)+').' + self.extension
         self.title = movie_name
         for er in ['>','<', ':', '\"', '\/', '\\', r"|", r"?", r"*" ]:
             if er in self.title :
                 self.title.replace(er, ' ')
+
+        orig_path = join(self.path, self.init_name)
+        nex_path = join(self.path, movie_name)
+
+        print('Renaming the movie from :', self.init_name, 'to ',movie_name)
+        os.rename(orig_path, nex_path)
 
     def display(self):
         """
@@ -176,7 +186,7 @@ def spider(given_path):
         for files in files_list:
             if is_video(files):
                 vid_count += 1
-                allVideos.append(Video(files, join(given_path, files), ret_dir(given_path)))
+                allVideos.append(Video(files, given_path, ret_dir(given_path)))
 
     for fold in folds_list:
         spider(join(given_path, fold))
@@ -184,12 +194,17 @@ def spider(given_path):
 
 erase = '\x1b[1A\x1b[2K'
 
-print('\n------------------------------------------------------------------\n')
-print('BEWARE THAT THIS IS A BETA VERSION AND IS PRONE TO RUN-TIME ERRORS.')
-print('THIS VERSION OF PROGRAM WILL NOT MAKE ANY CHANGES TO YOUR COMPUTER EXCEPT,')
-print('YOU MAY FOUND AN EXTRA FILE NAMED "Data.txt" AFTER COMPLETION OF THE PROGRAM.')
-print('PLEASE EMAIL THAT FILE TO THIS EMAIL ID : mldata.apoorv@gmail.com.\n')
-print('-----------------------------------------------------------------\n')
+print('\n\t------------------------------------------------------------------\n')
+print('\tBEWARE THAT THIS IS A BETA VERSION AND IS PRONE TO RUN-TIME ERRORS.\n')
+print('\tTHIS VERSION OF PROGRAM WILL RENAME MOST OF THE VIDEO FILES IT CAN\n'
+      '\tIDENTIFY. THIS PROGRAM IS NOT YET SUITED FOR IDENTIFYING TV SERIES\'\n')
+print('\tPLEASE MAKE SURE NO TV SERIES\' ARE STORED IN SAME DIRECTORY AS MOVIES\n')
+print('\tYOU MAY FOUND AN EXTRA FILE NAMED "Data.txt" IN SAME DIRECTORY AFTER THE\n'
+      '\tCOMPLETION OF THIS PROGRAM PLEASE EMAIL THAT FILE TO FOLLOWING\n')
+print('\t\tEMAIL ID : mldata.apoorv@gmail.com.\n')
+print('\tFEEDBACK CAN ALSO BE SENT TO ABOVE EMAIL ID')
+print('\n\t-----------------------------------------------------------------\n')
+print('Please make sure you read the above message and then;')
 n = input('Enter any key to begin crawling\n')
 print('The current Directory will be represented by "." ')
 now = datetime.datetime.now()
@@ -218,6 +233,14 @@ for vid in allVideos:
     f.write(vid.init_name + '-->' + vid.title + '\n\n')
     print('\n------------------------------------------------------------------\n')
 endtime = datetime.datetime.now()
+
+print('Starting Renaming the files;')
+time.sleep(1)
+for vid in allVideos:
+    vid.display()
+    print()
+    vid.get_name()
+    print('\n------------------------------------------------------------------\n')
 
 accuracy = float(input('\n\nPlease enter how many files were correctly named by the program :'))
 accuracyPercent = accuracy*100/len(allVideos)
