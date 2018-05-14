@@ -22,7 +22,7 @@ __author__ = "Cherub"
 __version__ = "1.7.beta"
 __email__ = "mldata.apoorv@gmail.com"
 __status__ = "Prototype"
-__credit__ = "Dipansh, Cherub"
+__credit__ = "Dipansh, TAZZ(Subodh) "
 
 allVideos = []
 
