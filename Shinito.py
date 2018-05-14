@@ -18,9 +18,9 @@ except Exception as ex:
           ' \'https://pypi.org/project/imdbpie/\'\n')
     print('If you face any other problem please refer to \'https://github.com/NotCherub/Shinito\'')
     sys.exit('\nError finding a dependency, Please install and then re-run program\n')
-    
+
 __author__ = "Cherub"
-__version__ = "1.8.alpha"       # Added Rename support and changes in Warning Message
+__version__ = "1.9.alpha"
 __email__ = "mldata.apoorv@gmail.com"
 __status__ = "Prototype"
 __credit__ = "Dipansh, TAZZ(Subodh)"
@@ -121,6 +121,17 @@ class Video:
 
         print('Renaming the movie from :', self.init_name, 'to ',movie_name)
         os.rename(orig_path, nex_path)
+
+    def revert_back(self):
+        """
+            Reverts back the renamed file to their original names.
+        :return:
+        """
+        orig_path = join(self.path, self.init_name)
+        nex_path = join(self.path, self.title)
+
+        print('Reverting movie from :', self.title, 'to ', self.init_name)
+        os.rename(nex_path, orig_path)
 
     def display(self):
         """
@@ -235,13 +246,20 @@ for vid in allVideos:
     print('\n------------------------------------------------------------------\n')
 endtime = datetime.datetime.now()
 
-print('Starting Renaming the files;')
-time.sleep(1)
+print('Starting Renaming the files;\n\n')
+time.sleep(2)
 for vid in allVideos:
     vid.display()
     print()
     vid.get_name()
     print('\n------------------------------------------------------------------\n')
+
+n = input('Do you want to revert back the renaming of movies?(y/n)')
+
+if n == 'y' or n == 'Y':
+    for vid in allVideos:
+        vid.revert_back()
+        print('\n------------------------------------------------------------------\n')
 
 accuracy = float(input('\n\nPlease enter how many files were correctly named by the program :'))
 accuracyPercent = accuracy*100/len(allVideos)
