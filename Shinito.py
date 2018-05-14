@@ -4,17 +4,25 @@
     Shinito Project was created to clean out all the remains of torrent files.
 """
 
-import os
-import re
-import time
-import datetime
-from os.path import isfile,join
-from imdbpie import Imdb
+try:
+    import os
+    import re
+    import time
+    import datetime
+    from os.path import isfile, join
+    from imdbpie import Imdb
+
+except Exception as ex:
+    print('Error! while loading the dependencies. Please make sure you have following dependencies\n')
+    print('"imdbpie" : Please install this by using \'pip install imdbpie\' or refer to'
+          ' \'https://pypi.org/project/imdbpie/\'\n')
+    print('If you face any other problem please refer to \'https://github.com/NotCherub/Shinito\'')
 
 __author__ = "Cherub"
-__version__ = "1.6.alpha"
+__version__ = "1.7.beta"
 __email__ = "mldata.apoorv@gmail.com"
 __status__ = "Prototype"
+__credit__ = "Dipansh, TAZZ(Subodh) "
 
 allVideos = []
 
@@ -45,7 +53,15 @@ class Video:
             Gets the IMDb details of the video file.
         :return: None
         """
-        search_query = Imdb().search_for_title(' '.join(self.stripped_name))
+        try:
+            search_query = Imdb().search_for_title(' '.join(self.stripped_name))
+        except Exception as ex:
+            print('\n\nError! While getting data from IMDb, got the following error\n'
+                  'Please make sure you are connected to Internet\n')
+            print('\n------------------------------------------------------------------\n')
+            print('\n', ex)
+            print('\n------------------------------------------------------------------\n')
+
         poss_year = []
 
         for part in self.stripped_name:
@@ -57,7 +73,14 @@ class Video:
             self.stripped_name = self.stripped_name[:-counter]
             if len(self.stripped_name) == 0:
                 return None
-            search_query = Imdb().search_for_title(' '.join(self.stripped_name))
+            try:
+                search_query = Imdb().search_for_title(' '.join(self.stripped_name))
+            except Exception as ex:
+                print('\n\nError! While getting data from IMDb, got the following error\n'
+                      'Please make sure you are connected to Internet\n')
+                print('\n------------------------------------------------------------------\n')
+                print('\n', ex)
+                print('\n------------------------------------------------------------------\n')
 
         alpha_name = []
         for part in self.stripped_name:
@@ -67,15 +90,26 @@ class Video:
         for search in search_query:
             search['match'] = 0
             if search['year'] in poss_year:
-                search['match'] +=1
+                search['match'] += 1
             if len(alpha_name) == 1 and search['title'] == alpha_name[0]:
-                search['match'] +=2
+                search['match'] += 2
 
         search_query = sorted(search_query, key= lambda k :k['match'], reverse=True)
         search_query = search_query[0]
         self.imdb_code = search_query['imdb_id']
         self.title = search_query['title']
         self.year = search_query['year']
+
+    def get_name(self, ):
+        """
+            Sets the self.title variable to movie name + year
+        :return:
+        """
+        movie_name = self.title + ' (' +str(self.year)+').' + self.extension
+        self.title = movie_name
+        for er in ['>','<', ':', '\"', '\/', '\\', r"|", r"?", r"*" ]:
+            if er in self.title :
+                self.title.replace(er, ' ')
 
     def display(self):
         """
@@ -103,7 +137,7 @@ def is_video(name):
     """
     point = name.rfind('.')
     extension = name[point+1:]
-    if extension == 'mkv' or extension == 'mp4' or extension == 'avi' or extension =='flv':
+    if extension == 'mkv' or extension == 'mp4' or extension == 'avi' or extension == 'flv':
         return True
     else:
         return False
